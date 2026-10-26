@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reels Story Studio — Bản Dựng Video Độc Lập</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="studio-header">
+    <div class="header-inner">
+      <div class="logo-area">
+        <div class="logo-badge">🎬</div>
+        <div class="logo-text">
+          <h1>Reels Story Studio <span class="tag-standalone">Portable Local</span></h1>
+          <p>Dựng Video Thẻ Chuyện 9:16 Hàng Loạt Chuẩn Facebook Reels / TikTok</p>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div class="status-pill" id="chromeStatusPill">
+          <span class="status-dot dot-warn"></span>
+          <span class="status-label">Đang kiểm tra Chrome...</span>
+        </div>
+        <div class="status-pill" id="ffmpegStatusPill">
+          <span class="status-dot dot-warn"></span>
+          <span class="status-label">Đang kiểm tra FFmpeg...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="studio-container">
+    
+    <!-- Step Navigation Tabs -->
+    <nav class="flow-nav">
+      <button class="flow-step-btn active" data-step="1">
+        <span class="step-num">1</span>
+        <span class="step-title">Kịch bản Story</span>
+      </button>
+      <button class="flow-step-btn" data-step="2">
+        <span class="step-num">2</span>
+        <span class="step-title">Chọn 5 Mẫu Thẻ</span>
+      </button>
+      <button class="flow-step-btn" data-step="3">
+        <span class="step-num">3</span>
+        <span class="step-title">Nhạc & Avatar</span>
+      </button>
+      <button class="flow-step-btn" data-step="4">
+        <span class="step-num">4</span>
+        <span class="step-title">Xem Trước & Dựng Video</span>
+      </button>
+    </nav>
+
+    <!-- STEP 1: Kịch bản câu chuyện -->
+    <section class="step-pane active" id="pane-step-1">
+      <div class="pane-header">
+        <div>
+          <h2>1. Nhập Kịch Bản Câu Chuyện</h2>
+          <p class="pane-subtitle">Dán danh sách các câu chuyện chuẩn định dạng <code>=== STORY ===</code> hoặc văn bản tự do.</p>
+        </div>
+        <div class="pane-actions">
+          <button type="button" class="btn btn-secondary" id="btnLoadSampleStories">
+            ✨ Nạp 5 Kịch Bản Mẫu
+          </button>
+          <button type="button" class="btn btn-outline" id="btnClearStories">
+            🗑️ Xóa trắng
+          </button>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <div class="editor-col">
+          <textarea id="storyInputText" placeholder="Dán các câu chuyện của bạn vào đây...
+Ví dụ:
+=== STORY 1 ===
+Tác giả: Maja Nowak
+Thời gian: 3 godz. temu
+Tên Page: Cienie Spadku
+Tiêu đề: Di chúc của mẹ
+Nội dung thẻ:
+Dòng 1...
+Dòng 2...
+Dòng 3...
+Dòng 4...
+Dòng 5...
+Highlights: &quot;cụm 1&quot; | &quot;cụm 2&quot;
+Nút CTA: Czytaj dalej
+Caption: Đoạn caption mồi câu...
+Comment 1: PARTIE 2: Toàn bộ nội dung phần 2..."></textarea>
+        </div>
+
+        <div class="parsed-col">
+          <div class="parsed-summary">
+            <span class="count-badge" id="storyCountBadge">Đã nhận diện: <strong>0 câu chuyện</strong></span>
+            <span class="hint-text">Chọn câu chuyện để xem trước thẻ bài:</span>
+          </div>
+
+          <div class="story-chips-list" id="storyChipsList">
+            <!-- Chip danh sách câu chuyện render tại đây -->
+          </div>
+
+          <div class="selected-story-preview" id="selectedStoryPreviewCard">
+            <p class="empty-state-text">Chưa có câu chuyện nào. Hãy dán kịch bản hoặc bấm "Nạp 5 Kịch Bản Mẫu".</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-footer">
+        <div></div>
+        <button type="button" class="btn btn-primary" onclick="goToStep(2)">
+          Tiếp tục: Chọn Mẫu Video ➔
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 2: Chọn Mẫu Video (5 Mẫu Chuẩn) -->
+    <section class="step-pane" id="pane-step-2">
+      <div class="pane-header">
+        <div>
+          <h2>2. Bộ Sưu Tập 5 Mẫu Thẻ Chuẩn</h2>
+          <p class="pane-subtitle">5 mẫu thẻ bài thịnh hành nhất với đầy đủ các bảng màu. Bạn có thể chọn 1 mẫu hoặc xoay vòng qua cả 5 mẫu.</p>
+        </div>
+        <div class="mode-selector-wrap">
+          <label class="mode-label">Chế độ phối mẫu:</label>
+          <select id="templateApplyMode" class="form-select">
+            <option value="cycle">🔄 Xoay vòng qua các mẫu đã chọn (Khuyên dùng)</option>
+            <option value="single">🔒 Khóa 1 mẫu cố định cho cả lô</option>
+            <option value="random">🎲 Phối ngẫu nhiên</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 5 Mẫu Template Cards Grid -->
+      <div class="templates-grid" id="templatesCardsContainer">
+        <!-- Render 5 cards bằng JavaScript -->
+      </div>
+
+      <div class="step-footer">
+        <button type="button" class="btn btn-secondary" onclick="goToStep(1)">
+          ⬅ Quay lại Kịch bản
+        </button>
+        <button type="button" class="btn btn-primary" onclick="goToStep(3)">
+          Tiếp tục: Cấu hình Nhạc & Avatar ➔
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 3: Nhạc & Avatar & Cấu hình -->
+    <section class="step-pane" id="pane-step-3">
+      <div class="pane-header">
+        <div>
+          <h2>3. Cấu Hình Avatar, Nhạc Nền & Video</h2>
+          <p class="pane-subtitle">Tùy chỉnh kho ảnh đại diện người kể, nhạc nền theo cảm xúc và độ phân giải xuất video.</p>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <!-- Cột Avatar -->
+        <div class="setting-card">
+          <div class="card-title-row">
+            <h3>👤 Ảnh Đại Diện (Avatar)</h3>
+            <span class="sub-badge" id="avatarCountBadge">20 ảnh</span>
+          </div>
+          <div class="setting-field">
+            <label>Chế độ chọn Avatar:</label>
+            <select id="avatarPickMode" class="form-select">
+              <option value="random">🎲 Xoay vòng tự động từ kho ảnh</option>
+              <option value="single">📌 Chọn 1 avatar cố định</option>
+            </select>
+          </div>
+          <div class="avatar-scroll-wrap" id="avatarSelectorList">
+            <!-- Render danh sách avatar -->
+          </div>
+        </div>
+
+        <!-- Cột Nhạc Nền -->
+        <div class="setting-card">
+          <div class="card-title-row">
+            <h3>🎵 Nhạc Nền Video</h3>
+            <span class="sub-badge" id="audioCountBadge">Kho nhạc</span>
+          </div>
+          <div class="setting-field">
+            <label>Chế độ nhạc:</label>
+            <select id="audioPickMode" class="form-select">
+              <option value="random">🎲 Xoay vòng tự động từng video</option>
+              <option value="single">📌 Chọn 1 bản nhạc cố định</option>
+            </select>
+          </div>
+          <div class="audio-scroll-wrap" id="audioSelectorList">
+            <!-- Render danh sách audio -->
+          </div>
+          <div class="audio-preview-player">
+            <audio id="globalAudioPlayer" controls style="width: 100%; height: 36px;"></audio>
+          </div>
+        </div>
+
+        <!-- Cột Xuất Video -->
+        <div class="setting-card">
+          <div class="card-title-row">
+            <h3>⚙️ Thông Số Kỹ Thuật Video</h3>
+          </div>
+
+          <div class="setting-field">
+            <label>Độ phân giải (Dọc 9:16):</label>
+            <select id="settingResolution" class="form-select">
+              <option value="1080x1920" selected>1080 × 1920 (Full HD sắc nét — Khuyên dùng)</option>
+              <option value="720x1280">720 × 1280 (HD nhanh, nhẹ)</option>
+            </select>
+          </div>
+
+          <div class="setting-field">
+            <label>Thời lượng video:</label>
+            <select id="settingDuration" class="form-select">
+              <option value="auto" selected>⏱ Tự động theo thời lượng mẫu (16.1s / 22s)</option>
+              <option value="15">15 giây</option>
+              <option value="16.1">16.1 giây (Chuẩn Facebook Reels)</option>
+              <option value="20">20 giây</option>
+              <option value="22">22 giây (Chuẩn Photo Card)</option>
+            </select>
+          </div>
+
+          <div class="setting-field">
+            <label>Âm lượng nhạc nền:</label>
+            <div class="range-wrap">
+              <input type="range" id="settingVolume" min="0" max="1" step="0.05" value="0.8">
+              <span id="volumeValueLabel" class="range-val">80%</span>
+            </div>
+          </div>
+
+          <div class="setting-field">
+            <label>Ngôn ngữ giao diện thẻ:</label>
+            <select id="settingLocale" class="form-select">
+              <option value="pl" selected>Tiếng Ba Lan (Polski - Maja Nowak)</option>
+              <option value="fr">Tiếng Pháp (Français - Brigitte Lefèvre)</option>
+              <option value="nl">Tiếng Hà Lan (Nederlands - Anouk van Dijk)</option>
+              <option value="en">Tiếng Anh (English - Sarah Jenkins)</option>
+              <option value="de">Tiếng Đức (Deutsch - Clara Hartmann)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-footer">
+        <button type="button" class="btn btn-secondary" onclick="goToStep(2)">
+          ⬅ Quay lại Chọn Mẫu
+        </button>
+        <button type="button" class="btn btn-primary" onclick="goToStep(4)">
+          Tiếp tục: Xem Trước & Dựng Video ➔
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 4: Xem trước & Render -->
+    <section class="step-pane" id="pane-step-4">
+      <div class="render-workspace">
+        
+        <!-- Cột Xem Trước (Phone Mockup) -->
+        <div class="preview-col">
+          <div class="mockup-header">
+            <h3>📱 Xem Trước Thẻ Bài (Live Preview)</h3>
+            <span class="resolution-badge" id="previewResBadge">1080 × 1920</span>
+          </div>
+
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe id="previewIframe" src="about:blank" title="Card Preview"></iframe>
+            </div>
+          </div>
+
+          <div class="preview-controls">
+            <span class="preview-info" id="previewInfoText">Mẫu: the-tim-vet-vang (oai-huong)</span>
+          </div>
+        </div>
+
+        <!-- Cột Điều Khiển Dựng & Hàng Đợi Kết Quả -->
+        <div class="execution-col">
+          <div class="control-box">
+            <div class="control-summary">
+              <h4>Tổng Quan Lô Dựng</h4>
+              <ul class="summary-list">
+                <li>Số video sẽ tạo: <strong id="summaryVideoCount">0 video</strong></li>
+                <li>Mẫu video áp dụng: <strong id="summaryTemplateMode">Xoay vòng 5 mẫu</strong></li>
+                <li>Độ phân giải xuất: <strong id="summaryResolution">1080x1920 Full HD</strong></li>
+              </ul>
+            </div>
+
+            <button type="button" class="btn btn-render-big" id="btnStartRender">
+              🚀 BẮT ĐẦU DỰNG LÔ VIDEO
+            </button>
+          </div>
+
+          <!-- Khung Tiến Trình Khi Đang Render -->
+          <div class="progress-box hidden" id="renderProgressBox">
+            <div class="progress-title-row">
+              <span class="progress-status-text" id="overallStatusText">Đang xử lý...</span>
+              <span class="progress-percent-val" id="overallPercentText">0%</span>
+            </div>
+
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="overallProgressBar" style="width: 0%;"></div>
+            </div>
+
+            <p class="progress-detail-step" id="currentStepDetail">Chuẩn bị tài nguyên...</p>
+          </div>
+
+          <!-- Khung Kết Quả Hoàn Tất -->
+          <div class="results-box hidden" id="renderResultsBox">
+            <div class="results-header">
+              <h3>🎉 Danh Sách Video Hoàn Tất</h3>
+              <a href="#" class="btn btn-download-all" id="btnDownloadAllZip" target="_blank">
+                📦 Tải Trọn Bộ File ZIP
+              </a>
+            </div>
+
+            <div class="results-items-list" id="resultsItemsContainer">
+              <!-- Render từng kết quả video hoàn tất -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="step-footer">
+        <button type="button" class="btn btn-secondary" onclick="goToStep(3)">
+          ⬅ Quay lại Cài đặt
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="studio-footer">
+    <p>The Story Studio Portable • Hoạt động 100% trên máy nội bộ • Không tải dữ liệu ra bên ngoài</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
